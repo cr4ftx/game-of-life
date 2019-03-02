@@ -1,4 +1,3 @@
-
 export function nextGeneration(grid: string[]): string[] {
   const counter = new Map<string, number>();
 
@@ -41,4 +40,22 @@ export function stringToCoord(str: string): number[] {
   return str
     .split(",")
     .map((c) => parseInt(c, 10));
+}
+
+export interface IContext {
+  fillStyle: string;
+  fillRect: (x: number, y: number, width: number, heigth: number) => void;
+  canvas: { width: number, heigth: number };
+}
+
+export function render(ctx: IContext, grid: string[], zoom: number) {
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.heigth);
+
+  ctx.fillStyle = "#000000";
+  grid.forEach((cell) => {
+    const [x, y] = stringToCoord(cell);
+
+    ctx.fillRect(x, y, 5, 5);
+  });
 }

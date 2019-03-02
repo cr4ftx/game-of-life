@@ -1,6 +1,8 @@
 import {
   getNeighbors,
+  IContext,
   nextGeneration,
+  render,
   stringToCoord
 } from "../src/gameoflife";
 
@@ -68,6 +70,22 @@ describe("gameoflife", () => {
   describe("stringToCoord", () => {
     it("should convert 2,1 into [2, 1]", () => {
       expect(stringToCoord("2,1")).toEqual([2, 1]);
+    });
+  });
+
+  describe("render", () => {
+    it("should render living cells on the context", () => {
+      const cells = ["1,1", "1,2", "2,1"];
+
+      const context: IContext = {
+        canvas: { width: 100, heigth: 100 },
+        fillRect: jest.fn(),
+        fillStyle: ""
+      };
+
+      render(context, cells, 1);
+
+      expect(context.fillRect).toMatchSnapshot();
     });
   });
 });
