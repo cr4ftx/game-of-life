@@ -1,3 +1,1 @@
-import { a } from "./index";
-
-document.getElementById("app").innerText = `(${a.x},${a.y})`;
+document.getElementById("app").innerText = `Hello Game of Life`;
