@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "tslint src/**/*.ts --fix",
     "dev": "MODE=development webpack-dev-server --open",
-    "test": "jest",
+    "test": "jest --coverage",
     "build": "webpack"
   },
   "keywords": [],

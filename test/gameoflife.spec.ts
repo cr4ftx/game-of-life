@@ -78,12 +78,12 @@ describe("gameoflife", () => {
       const cells = ["1,1", "1,2", "2,1"];
 
       const context: IContext = {
-        canvas: { width: 100, heigth: 100 },
+        canvas: { width: 100, height: 100 },
         fillRect: jest.fn(),
         fillStyle: ""
       };
 
-      render(context, cells, 1);
+      render(context, cells, 2);
 
       expect(context.fillRect).toMatchSnapshot();
     });

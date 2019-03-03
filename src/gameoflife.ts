@@ -43,19 +43,20 @@ export function stringToCoord(str: string): number[] {
 }
 
 export interface IContext {
-  fillStyle: string;
+  fillStyle: string | CanvasGradient | CanvasPattern;
   fillRect: (x: number, y: number, width: number, heigth: number) => void;
-  canvas: { width: number, heigth: number };
+  canvas: { width: number, height: number };
 }
 
 export function render(ctx: IContext, grid: string[], zoom: number) {
+  const width = 5;
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.heigth);
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   ctx.fillStyle = "#000000";
   grid.forEach((cell) => {
     const [x, y] = stringToCoord(cell);
 
-    ctx.fillRect(x, y, 5, 5);
+    ctx.fillRect(x * width * zoom, y * width * zoom, width * zoom, width * zoom);
   });
 }
