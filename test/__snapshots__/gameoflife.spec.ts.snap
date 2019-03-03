@@ -4,35 +4,25 @@ exports[`gameoflife render should render living cells on the context 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
-      0,
-      0,
-      100,
-      100,
+      52,
+      52,
+      2,
+      2,
+    ],
+    Array [
+      52,
+      54,
+      2,
+      2,
     ],
     Array [
       54,
-      54,
-      4,
-      4,
-    ],
-    Array [
-      54,
-      58,
-      4,
-      4,
-    ],
-    Array [
-      58,
-      54,
-      4,
-      4,
+      52,
+      2,
+      2,
     ],
   ],
   "results": Array [
-    Object {
-      "type": "return",
-      "value": undefined,
-    },
     Object {
       "type": "return",
       "value": undefined,

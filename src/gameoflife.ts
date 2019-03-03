@@ -48,9 +48,7 @@ export interface IContext {
 }
 
 export function render(ctx: IContext, grid: string[], zoom: number) {
-  const width = 2;
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  const width = 1;
   const x0 = ctx.canvas.width / 2;
   const y0 = ctx.canvas.height / 2;
 

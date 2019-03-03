@@ -13,6 +13,7 @@
       <button @click="run">{{ runOrStop }}</button>
       <button @click="renderNextGen">next</button>
       <button @click="resetZoom">reset zoom</button>
+      <button @click="reset">reset</button>
     </div>
   </div>
 </template>
@@ -25,8 +26,8 @@ import template from "./template"
 
 @Component
 export default class App extends Vue {
-  gameOfLife = template;
-  zoom = 1;
+  grid = template;
+  zoom = 3;
   id: number;
   ctx: CanvasRenderingContext2D;
   runOrStop = "run";
@@ -34,25 +35,36 @@ export default class App extends Vue {
   mounted() {
     const canvas = <HTMLCanvasElement> this.$refs.canvas;
     this.ctx = canvas.getContext('2d');
-    render(this.ctx, this.gameOfLife, this.zoom);
+    this.renderTheGrid()
   }
 
   onWheel(e: WheelEvent) {
     this.zoom += e.deltaY < 0
-      ? this.zoom > 0 ? -0.05 : 0
+      ? this.zoom >= 0.05 ? -0.05 : 0
       : 0.05;
 
-    render(this.ctx, this.gameOfLife, this.zoom);
+    this.renderTheGrid()
   }
 
   renderNextGen() {
-    this.gameOfLife = nextGeneration(this.gameOfLife);
-    render(this.ctx, this.gameOfLife, this.zoom);
+    this.grid = nextGeneration(this.grid);
+    this.renderTheGrid()
+  }
+
+  reset() {
+    this.grid = template;
+    this.renderTheGrid()
   }
 
   resetZoom() {
-    this.zoom = 1
-    render(this.ctx, this.gameOfLife, this.zoom);
+    this.zoom = 3
+    this.renderTheGrid()
+  }
+
+  renderTheGrid() {
+    this.ctx.fillStyle = "#ffffff";
+    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    render(this.ctx, this.grid, this.zoom);
   }
 
   run() {
@@ -67,25 +79,3 @@ export default class App extends Vue {
   }
 }
 </script>
-
-<style scoped>
-#app {
-  text-align: center;
-  font-family: 'Times New Roman', Times, serif;
-}
-
-.canvas canvas {
-  border: solid 1px #78909C;
-}
-
-button {
-  min-width: 60px;
-  height: 35px;
-  background-color: #455A64;
-  color: white;
-  border: none;
-  font-size: 16px;
-  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2);
-  border-radius: 2px;
-}
-</style>
