@@ -1,5 +1,8 @@
 # Conway's game of life
 
+[![Build Status](https://travis-ci.org/swanncastel/game-of-life.svg?branch=master)](https://travis-ci.org/swanncastel/game-of-life) [![codecov](https://codecov.io/gh/swanncastel/game-of-life/branch/master/graph/badge.svg)](https://codecov.io/gh/swanncastel/game-of-life)
+
+
 > The aim of this project is to create an implementation of the game of life powered Typescript.
 
 ## Scripts
