@@ -11,11 +11,10 @@ export function nextGeneration(grid: string[]): string[] {
   });
 
   const newGrid: string[] = [];
+  const g = new Set(grid);
 
   counter.forEach((v, k) => {
-    if (grid.includes(k) && (v === 2 || v === 3)) {
-      newGrid.push(k);
-    } else if (v === 3) {
+    if (v === 3 || g.has(k) && v === 2) {
       newGrid.push(k);
     }
   });
@@ -49,14 +48,16 @@ export interface IContext {
 }
 
 export function render(ctx: IContext, grid: string[], zoom: number) {
-  const width = 5;
+  const width = 2;
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  const x0 = ctx.canvas.width / 2;
+  const y0 = ctx.canvas.height / 2;
 
-  ctx.fillStyle = "#000000";
+  ctx.fillStyle = "#263238";
   grid.forEach((cell) => {
     const [x, y] = stringToCoord(cell);
 
-    ctx.fillRect(x * width * zoom, y * width * zoom, width * zoom, width * zoom);
+    ctx.fillRect(x0 + x * width * zoom, y0 + y * width * zoom, width * zoom, width * zoom);
   });
 }

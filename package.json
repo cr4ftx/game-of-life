@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "tslint src/**/*.ts --fix",
-    "dev": "MODE=development webpack-dev-server --open",
+    "dev": "NODE_ENV=development webpack-dev-server",
     "test": "jest --coverage",
     "build": "webpack"
   },
@@ -25,11 +25,16 @@
     "ts-loader": "^5.3.3",
     "tslint": "^5.13.1",
     "typescript": "^3.3.3333",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.8",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "vue": "^2.6.8",
+    "vue-property-decorator": "^7.3.0"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"

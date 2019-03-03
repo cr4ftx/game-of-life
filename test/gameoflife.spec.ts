@@ -77,7 +77,7 @@ describe("gameoflife", () => {
     it("should render living cells on the context", () => {
       const cells = ["1,1", "1,2", "2,1"];
 
-      const context: IContext = {
+      const context = {
         canvas: { width: 100, height: 100 },
         fillRect: jest.fn(),
         fillStyle: ""
