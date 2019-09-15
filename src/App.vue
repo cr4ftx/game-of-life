@@ -64,6 +64,7 @@ export default class App extends Vue {
   renderTheGrid() {
     this.ctx.fillStyle = "#ffffff";
     this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.ctx.fillStyle = "#263238";
     render(this.ctx, this.grid, this.zoom);
   }
 
