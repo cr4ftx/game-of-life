@@ -1,4 +1,4 @@
-export default [
+export default new Set([
   "0,2",
   "0,3",
   "1,2",
@@ -34,4 +34,4 @@ export default [
   "35,9",
   "36,7",
   "37,8"
-];
+]);

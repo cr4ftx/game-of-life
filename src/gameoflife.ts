@@ -1,5 +1,6 @@
-export function nextGeneration(grid: string[]): string[] {
+export function nextGeneration(grid: Set<string>): Set<string> {
   const counter = new Map<string, number>();
+  const newGrid: Set<string> = new Set();
 
   grid.forEach((cell) => {
     const [x, y] = stringToCoord(cell);
@@ -10,12 +11,9 @@ export function nextGeneration(grid: string[]): string[] {
     });
   });
 
-  const newGrid: string[] = [];
-  const g = new Set(grid);
-
   counter.forEach((v, k) => {
-    if (v === 3 || g.has(k) && v === 2) {
-      newGrid.push(k);
+    if (v === 3 || grid.has(k) && v === 2) {
+      newGrid.add(k);
     }
   });
 
@@ -47,7 +45,7 @@ export interface IContext {
   canvas: { width: number, height: number };
 }
 
-export function render(ctx: IContext, grid: string[], zoom: number) {
+export function render(ctx: IContext, grid: Set<string>, zoom: number) {
   const width = 1;
   const x0 = ctx.canvas.width / 2;
   const y0 = ctx.canvas.height / 2;

@@ -7,7 +7,7 @@
 ## Scripts
 
 ```bash
-# Install dependencies
+# Install dependencies (npm === 6.9.0)
 npm i
 
 # Serve public/index.html and main.ts as entry file through weback-dev-serve

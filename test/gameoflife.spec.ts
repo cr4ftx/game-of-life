@@ -9,42 +9,45 @@ import {
 describe("gameoflife", () => {
   describe("nextGeneration", () => {
     it("should kill a live cell with less than two neighbors", () => {
-      const newGrid = nextGeneration(["1,1", "1,2"]);
+      const cells = new Set(["1,1", "1,2"]);
+      const newGrid = nextGeneration(cells);
 
-      expect(newGrid).toEqual([]);
+      expect(newGrid).toEqual(new Set([]));
     });
 
     it("should let a live cell with 2 neighbors alive", () => {
-      const cells = ["1,1", "1,2", "2,1"];
+      const cells = new Set(["1,1", "1,2", "2,1"]);
       const newGrid = nextGeneration(cells);
 
-      const expected = cells.every((cell) => newGrid.includes(cell));
+      const expected = [...cells].every((cell) => newGrid.has(cell));
 
       expect(expected).toBeTruthy();
     });
 
     it("should let a live cell with 3 neighbors alive", () => {
-      const cells = ["1,1", "1,2", "2,1", "2,2"];
+      const cells = new Set(["1,1", "1,2", "2,1", "2,2"]);
       const newGrid = nextGeneration(cells);
 
-      const expected = cells.every((cell) => newGrid.includes(cell));
+      const expected = [...cells].every((cell) => newGrid.has(cell));
 
       expect(expected).toBeTruthy();
     });
 
     it("should resurrect a dead cell with 3 live neighbors", () => {
-      const newGrid = nextGeneration(["0,0", "1,0", "2,0"]);
+      const cells = new Set(["0,0", "1,0", "2,0"]);
+      const newGrid = nextGeneration(cells);
 
       const expected = ["1,1", "1,-1"]
-        .every((cell) => newGrid.includes(cell));
+        .every((cell) => newGrid.has(cell));
 
       expect(expected).toBeTruthy();
     });
 
     it("should kill a live cell with more than tree live neighbors", () => {
-      const newGrid = nextGeneration(["0,0", "1,0", "2,0", "0,1", "1,1"]);
+      const cells = new Set(["0,0", "1,0", "2,0", "0,1", "1,1"]);
+      const newGrid = nextGeneration(cells);
 
-      const oneOne = newGrid.find((cell) => cell === "1,1");
+      const oneOne = newGrid.has("1,1");
 
       expect(oneOne).toBeFalsy();
     });
@@ -75,7 +78,7 @@ describe("gameoflife", () => {
 
   describe("render", () => {
     it("should render living cells on the context", () => {
-      const cells = ["1,1", "1,2", "2,1"];
+      const cells = new Set(["1,1", "1,2", "2,1"]);
 
       const context = {
         canvas: { width: 100, height: 100 },
