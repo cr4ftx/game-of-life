@@ -1,16 +1,15 @@
 <template>
   <div id="app">
-    <div class="canvas">
-      <canvas
-        ref="canvas"
-        :width="500"
-        :height="500"
-        @wheel="onWheel"
-      ></canvas>
-    </div>
+    <canvas
+      ref="canvas"
+      :width="500"
+      :height="500"
+      @wheel="onWheel"
+    ></canvas>
 
     <div class="toolbar">
-      <button @click="run">{{ runOrStop }}</button>
+      <button v-if="!id" @click="run">run</button>
+      <button v-else @click="stop">stop</button>
       <button @click="renderNextGen">next</button>
       <button @click="resetZoom">reset zoom</button>
       <button @click="reset">reset</button>
@@ -22,15 +21,14 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { render, nextGeneration } from "./gameoflife";
-import template from "./template"
+import template from './templates.json';
 
 @Component
 export default class App extends Vue {
-  grid = template;
+  grid = new Set(template);
   zoom = 3;
-  id: number;
+  id: number = null;
   ctx: CanvasRenderingContext2D;
-  runOrStop = "run";
 
   mounted() {
     const canvas = <HTMLCanvasElement> this.$refs.canvas;
@@ -51,8 +49,15 @@ export default class App extends Vue {
     this.renderTheGrid()
   }
 
+  renderTheGrid() {
+    this.ctx.fillStyle = "#ffffff";
+    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.ctx.fillStyle = "#263238";
+    render(this.ctx, this.grid, this.zoom);
+  }
+
   reset() {
-    this.grid = template;
+    this.grid = new Set(template);
     this.renderTheGrid()
   }
 
@@ -61,22 +66,13 @@ export default class App extends Vue {
     this.renderTheGrid()
   }
 
-  renderTheGrid() {
-    this.ctx.fillStyle = "#ffffff";
-    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-    this.ctx.fillStyle = "#263238";
-    render(this.ctx, this.grid, this.zoom);
+  run() {
+    this.id = setInterval(this.renderNextGen, 30);
   }
 
-  run() {
-    if (this.id) {
-      this.runOrStop = "run";
-      window.clearInterval(this.id);
-      this.id = null;
-    } else {
-      this.runOrStop = "stop";
-      this.id = window.setInterval(this.renderNextGen, 30);
-    }
+  stop() {
+    clearInterval(this.id);
+    this.id = null;
   }
 }
 </script>
