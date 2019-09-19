@@ -35,12 +35,7 @@ export const stringToCoord = (str: string) => str
   .split(",")
   .map((c) => parseInt(c, 10));
 
-export interface IContext {
-  fillRect: (x: number, y: number, width: number, heigth: number) => void;
-  canvas: { width: number, height: number };
-}
-
-export function render(ctx: IContext, grid: Set<string>, zoom: number) {
+export function render(ctx: CanvasRenderingContext2D, grid: Set<string>, zoom: number) {
   const width = 1;
   const x0 = ctx.canvas.width / 2;
   const y0 = ctx.canvas.height / 2;

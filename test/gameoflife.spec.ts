@@ -1,6 +1,5 @@
 import {
   getNeighbors,
-  IContext,
   nextGeneration,
   render,
   stringToCoord
@@ -80,15 +79,14 @@ describe("gameoflife", () => {
     it("should render living cells on the context", () => {
       const cells = new Set(["1,1", "1,2", "2,1"]);
 
-      const context = {
-        canvas: { width: 100, height: 100 },
-        fillRect: jest.fn(),
-        fillStyle: ""
-      };
+      const ctx = window.document.createElement("canvas").getContext("2d");
+      ctx.canvas.width = 100;
+      ctx.canvas.height = 100;
+      ctx.fillRect = jest.fn();
 
-      render(context, cells, 2);
+      render(ctx, cells, 2);
 
-      expect(context.fillRect).toMatchSnapshot();
+      expect(ctx.fillRect).toMatchSnapshot();
     });
   });
 });
