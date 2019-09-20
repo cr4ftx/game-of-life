@@ -4,14 +4,15 @@
       ref="canvas"
       :width="500"
       :height="500"
-      @wheel="onWheel"
+      @mousemove="onMouseMove"
+      @mousedown="mouseDown = true"
+      @mouseup="mouseDown = false"
     ></canvas>
 
     <div class="toolbar">
       <button v-if="!id" @click="run">run</button>
       <button v-else @click="stop">stop</button>
       <button @click="renderNextGen">next</button>
-      <button @click="resetZoom">reset zoom</button>
       <button @click="reset">reset</button>
     </div>
   </div>
@@ -26,22 +27,25 @@ import template from './templates.json';
 @Component
 export default class App extends Vue {
   grid = new Set(template);
-  zoom = 3;
+  zoom = 2;
   id: number = null;
   ctx: CanvasRenderingContext2D;
+  origin: { x: number; y: number; };
+  mouseDown = false;
 
   mounted() {
     const canvas = <HTMLCanvasElement> this.$refs.canvas;
     this.ctx = canvas.getContext('2d');
+    this.origin = { x: canvas.width / 2, y: canvas.height / 2 }
     this.renderTheGrid()
   }
 
-  onWheel(e: WheelEvent) {
-    this.zoom += e.deltaY < 0
-      ? this.zoom >= 0.05 ? -0.05 : 0
-      : 0.05;
-
-    this.renderTheGrid()
+  onMouseMove(e: MouseEvent) {
+    if (this.mouseDown) {
+      this.origin.x += e.movementX;
+      this.origin.y += e.movementY;
+      this.renderTheGrid()
+    }
   }
 
   renderNextGen() {
@@ -53,17 +57,17 @@ export default class App extends Vue {
     this.ctx.fillStyle = "#ffffff";
     this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.fillStyle = "#263238";
-    render(this.ctx, this.grid, this.zoom);
+    render(this.ctx, this.grid, {
+      zoom: this.zoom,
+      originX: this.origin.x,
+      originY: this.origin.y
+    });
   }
 
   reset() {
     this.grid = new Set(template);
     this.renderTheGrid()
-  }
-
-  resetZoom() {
-    this.zoom = 3
-    this.renderTheGrid()
+    this.stop()
   }
 
   run() {

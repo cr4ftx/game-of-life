@@ -35,17 +35,22 @@ export const stringToCoord = (str: string) => str
   .split(",")
   .map((c) => parseInt(c, 10));
 
-export function render(ctx: CanvasRenderingContext2D, grid: Set<string>, zoom: number) {
+interface IRenderOptions {
+  zoom: number;
+  originX: number;
+  originY: number;
+}
+
+export function render(ctx: CanvasRenderingContext2D, grid: Set<string>, options: IRenderOptions) {
+  const { zoom, originX, originY } = options;
   const width = 1;
-  const x0 = ctx.canvas.width / 2;
-  const y0 = ctx.canvas.height / 2;
 
   grid.forEach((cell) => {
     const [x, y] = stringToCoord(cell);
 
     ctx.fillRect(
-      x0 + x * width * zoom,
-      y0 + y * width * zoom,
+      originX + x * width * zoom,
+      originY + y * width * zoom,
       width * zoom,
       width * zoom
     );

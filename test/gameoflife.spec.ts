@@ -84,7 +84,11 @@ describe("gameoflife", () => {
       ctx.canvas.height = 100;
       ctx.fillRect = jest.fn();
 
-      render(ctx, cells, 2);
+      render(ctx, cells, {
+        originX: 50,
+        originY: 50,
+        zoom: 2,
+      });
 
       expect(ctx.fillRect).toMatchSnapshot();
     });
