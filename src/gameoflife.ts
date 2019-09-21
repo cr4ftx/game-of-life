@@ -39,11 +39,11 @@ interface IRenderOptions {
   zoom: number;
   originX: number;
   originY: number;
+  width: number;
 }
 
 export function render(ctx: CanvasRenderingContext2D, grid: Set<string>, options: IRenderOptions) {
-  const { zoom, originX, originY } = options;
-  const width = 1;
+  const { zoom, originX, originY, width } = options;
 
   grid.forEach((cell) => {
     const [x, y] = stringToCoord(cell);

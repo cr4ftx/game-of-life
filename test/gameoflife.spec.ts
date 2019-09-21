@@ -87,6 +87,7 @@ describe("gameoflife", () => {
       render(ctx, cells, {
         originX: 50,
         originY: 50,
+        width: 1,
         zoom: 2,
       });
 
