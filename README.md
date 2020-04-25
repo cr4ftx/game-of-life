@@ -1,24 +1,28 @@
 # Conway's game of life
 
-[![Build Status](https://travis-ci.org/swanncastel/game-of-life.svg?branch=master)](https://travis-ci.org/swanncastel/game-of-life) [![codecov](https://codecov.io/gh/swanncastel/game-of-life/branch/master/graph/badge.svg)](https://codecov.io/gh/swanncastel/game-of-life)
+[![Build Status](https://travis-ci.org/swanncastel/game-of-life.svg?branch=master)](https://travis-ci.org/swanncastel/game-of-life)
+[![codecov](https://codecov.io/gh/swanncastel/game-of-life/branch/master/graph/badge.svg)](https://codecov.io/gh/swanncastel/game-of-life)
 
-> The aim of this project is to create an implementation of the game of life powered by Typescript.
+> Game of life sandbox to practice Vue3, TDD, Custom Webpack / Babel / Eslint config to understand what VueCli basically does.
 
 ## Scripts
 
 ```bash
-# Install dependencies (npm === 6.9.0)
-npm i
+# Install dependencies
+npm install
 
-# Serve public/index.html and main.ts as entry file through weback-dev-serve
+# Run dev server
 npm run dev
 
-# Run tslint and try to fix issues
+# Lint files
 npm run lint
+
+# Format files
+npm run prettier
 
 # Run unit test with jest
 npm test
 
-# Compile to production through Typescript compiler
+# Compile to production
 npm run build
 ```

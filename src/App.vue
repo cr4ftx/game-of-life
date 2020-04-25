@@ -2,95 +2,92 @@
   <div id="app">
     <canvas
       ref="canvas"
-      :width="500"
-      :height="500"
+      :width="width"
+      :height="height"
+      :class="{ grabbing: mouseDown }"
       @mousemove="onMouseMove"
       @mousedown="mouseDown = true"
       @mouseup="mouseDown = false"
-    ></canvas>
-
-    <div class="toolbar">
-      <button v-if="!id" @click="run">run</button>
-      <button v-else @click="stop">stop</button>
-      <button @click="generateNextGen">next</button>
-      <button @click="reset">reset</button>
-      <select v-model="template">
-        <option v-for="t in Object.keys(templates)" :value="t">{{ t }}</option>
-      </select>
-    </div>
+    />
   </div>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import { render, nextGeneration } from "./gameoflife";
-import templates from "./templates.json";
+<script>
+import { render, nextGeneration } from './gameoflife';
+import template from './template.json';
 
-type Template = "template1" | "glider";
+export default {
+  name: 'App',
 
-@Component({
+  data() {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      grid: new Set(template),
+      mouseDown: false,
+      options: {
+        zoom: 3,
+        originX: window.innerWidth / 2,
+        originY: window.innerHeight / 2,
+        width: 1
+      }
+    };
+  },
+
   watch: {
-    template() {
-      this.grid = new Set(this.templates[this.template]);
-    },
-    grid() {
-      this.renderTheGrid();
+    grid: {
+      handler() {
+        this.renderTheGrid();
+      }
     }
-  }
-})
-export default class App extends Vue {
-  grid: Set<string> = null;
-  templates = templates;
-  template: Template = "template1";
-  zoom = 2;
-  id: number = null;
-  ctx: CanvasRenderingContext2D = null;
-  options = {
-    zoom: 2,
-    originX: 250,
-    originY: 250,
-    width: 1
-  };
-  mouseDown = false;
+  },
 
   mounted() {
-    const canvas = <HTMLCanvasElement> this.$refs.canvas;
-    this.ctx = canvas.getContext('2d');
-    this.grid = new Set(this.templates["template1"]);
-  }
+    setInterval(() => {
+      this.grid = nextGeneration(this.grid);
+    }, 30);
 
-  renderTheGrid() {
-    this.ctx.fillStyle = "#ffffff";
-    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-    this.ctx.fillStyle = "#263238";
-    render(this.ctx, this.grid, this.options);
-  }
+    window.addEventListener('resize', () => {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+    });
+  },
 
-  generateNextGen() {
-    this.grid = nextGeneration(this.grid);
-  }
+  methods: {
+    renderTheGrid() {
+      const ctx = this.$refs.canvas.getContext('2d');
 
-  run() {
-    this.id = setInterval(this.generateNextGen, 30);
-  }
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.fillStyle = '#263238';
+      render(ctx, this.grid, this.options);
+    },
 
-  stop() {
-    clearInterval(this.id);
-    this.id = null;
-  }
-
-  reset() {
-    this.grid = new Set(this.templates[this.template]);
-    this.stop();
-  }
-
-  onMouseMove(e: MouseEvent) {
-    if (this.mouseDown) {
-      this.options.originX += e.movementX;
-      this.options.originY += e.movementY;
-      this.renderTheGrid();
+    onMouseMove(e) {
+      if (this.mouseDown) {
+        this.options.originX += e.movementX;
+        this.options.originY += e.movementY;
+        this.renderTheGrid();
+      }
     }
   }
-}
+};
 </script>
+
+<style>
+#app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+canvas {
+  cursor: pointer;
+}
+
+.grabbing {
+  cursor: grabbing;
+}
+</style>

@@ -1,5 +1,7 @@
 module.exports = {
-  preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  setupFiles: ['jest-canvas-mock']
+  setupFiles: ['jest-canvas-mock'],
+  transform: {
+    '^.+\\.js$': 'babel-jest'
+  }
 };
