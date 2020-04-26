@@ -8,6 +8,7 @@
       @mousemove="onMouseMove"
       @mousedown="mouseDown = true"
       @mouseup="mouseDown = false"
+      @wheel="onWheel"
     />
   </div>
 </template>
@@ -25,12 +26,9 @@ export default {
       height: window.innerHeight,
       grid: new Set(template),
       mouseDown: false,
-      options: {
-        zoom: 3,
-        originX: window.innerWidth / 2,
-        originY: window.innerHeight / 2,
-        width: 1
-      }
+      offsetX: window.innerWidth / 2,
+      offsetY: window.innerHeight / 2,
+      zoom: 1
     };
   },
 
@@ -60,15 +58,35 @@ export default {
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       ctx.fillStyle = '#263238';
-      render(ctx, this.grid, this.options);
+      render(ctx, this.grid, {
+        offsetX: this.offsetX,
+        offsetY: this.offsetY,
+        zoom: this.zoom
+      });
     },
 
     onMouseMove(e) {
       if (this.mouseDown) {
-        this.options.originX += e.movementX;
-        this.options.originY += e.movementY;
-        this.renderTheGrid();
+        this.offsetX += e.movementX / this.zoom;
+        this.offsetY += e.movementY / this.zoom;
       }
+    },
+
+    onWheel(e) {
+      const beforeX = e.clientX / this.zoom - this.offsetX;
+      const beforeY = e.clientY / this.zoom - this.offsetY;
+
+      if (e.deltaY > 0) {
+        this.zoom *= 0.9;
+      } else {
+        this.zoom *= 1.1;
+      }
+
+      const afterX = e.clientX / this.zoom - this.offsetX;
+      const afterY = e.clientY / this.zoom - this.offsetY;
+
+      this.offsetX += afterX - beforeX;
+      this.offsetY += afterY - beforeY;
     }
   }
 };
