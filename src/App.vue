@@ -33,10 +33,8 @@ export default {
   },
 
   watch: {
-    grid: {
-      handler() {
-        this.renderTheGrid();
-      }
+    grid() {
+      this.renderTheGrid();
     }
   },
 
