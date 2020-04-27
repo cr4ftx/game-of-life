@@ -34,16 +34,16 @@ export function nextGeneration(grid) {
 }
 
 export function render(ctx, grid, options) {
-  const { offsetX, offsetY, width = 5, zoom = 1 } = options;
+  const { offsetX, offsetY, cellSize, zoom } = options;
 
   grid.forEach(cell => {
     const [x, y] = stringToCoord(cell);
 
     ctx.fillRect(
-      (offsetX + x * width) * zoom,
-      (offsetY + y * width) * zoom,
-      zoom * width,
-      zoom * width
+      (offsetX + x * cellSize) * zoom,
+      (offsetY + y * cellSize) * zoom,
+      zoom * cellSize,
+      zoom * cellSize
     );
   });
 }

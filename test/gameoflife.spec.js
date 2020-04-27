@@ -54,7 +54,7 @@ describe('gameoflife', () => {
       render(ctx, cells, {
         offsetX: 50,
         offsetY: 50,
-        width: 2,
+        cellSize: 2,
         zoom: 2
       });
 

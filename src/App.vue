@@ -4,12 +4,31 @@
       ref="canvas"
       :width="width"
       :height="height"
-      :class="{ grabbing: mouseDown }"
+      :class="{
+        grabbing: mouseDown && !shiftPressed,
+        pointing: !mouseDown && !shiftPressed
+      }"
       @mousemove="onMouseMove"
       @mousedown="mouseDown = true"
       @mouseup="mouseDown = false"
       @wheel="onWheel"
+      @click="onClicked"
     />
+
+    <button
+      v-if="running"
+      class="edit"
+      @click="running = false"
+    >
+      pause
+    </button>
+    <button
+      v-else
+      class="edit"
+      @click="running = true"
+    >
+      run
+    </button>
   </div>
 </template>
 
@@ -26,27 +45,55 @@ export default {
       height: window.innerHeight,
       grid: new Set(template),
       mouseDown: false,
+      running: false,
       offsetX: window.innerWidth / 2,
       offsetY: window.innerHeight / 2,
-      zoom: 1
+      zoom: 1,
+      cellSize: 5,
+      intervalId: null,
+      shiftPressed: false
     };
   },
 
   watch: {
-    grid() {
-      this.renderTheGrid();
+    grid: 'renderTheGrid',
+    offsetX: 'renderTheGrid',
+    offsetY: 'renderTheGrid',
+    width: 'renderTheGrid',
+    running() {
+      if (this.running) {
+        this.intervalId = setInterval(() => {
+          this.grid = nextGeneration(this.grid);
+        }, 50);
+      } else {
+        clearInterval(this.intervalId);
+      }
     }
   },
 
   mounted() {
-    setInterval(() => {
-      this.grid = nextGeneration(this.grid);
-    }, 30);
-
     window.addEventListener('resize', () => {
       this.width = window.innerWidth;
       this.height = window.innerHeight;
     });
+
+    window.addEventListener('keyup', e => {
+      if (e.keyCode === 16) {
+        this.shiftPressed = false;
+      }
+    });
+
+    window.addEventListener('keydown', e => {
+      if (e.keyCode === 16) {
+        this.shiftPressed = true;
+      }
+    });
+
+    this.renderTheGrid();
+  },
+
+  updated() {
+    this.renderTheGrid();
   },
 
   methods: {
@@ -55,36 +102,56 @@ export default {
 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.fillStyle = '#263238';
+
+      ctx.fillStyle = '#555555';
       render(ctx, this.grid, {
         offsetX: this.offsetX,
         offsetY: this.offsetY,
-        zoom: this.zoom
+        zoom: this.zoom,
+        cellSize: this.cellSize
       });
     },
 
+    getCoordInTheGame(screenX, screenY) {
+      return [
+        screenX / this.zoom - this.offsetX,
+        screenY / this.zoom - this.offsetY
+      ];
+    },
+
     onMouseMove(e) {
-      if (this.mouseDown) {
+      if (this.mouseDown && !this.shiftPressed) {
         this.offsetX += e.movementX / this.zoom;
         this.offsetY += e.movementY / this.zoom;
       }
     },
 
-    onWheel(e) {
-      const beforeX = e.clientX / this.zoom - this.offsetX;
-      const beforeY = e.clientY / this.zoom - this.offsetY;
+    onWheel({ clientX, clientY, deltaY }) {
+      const [beforeX, beforeY] = this.getCoordInTheGame(clientX, clientY);
 
-      if (e.deltaY > 0) {
-        this.zoom *= 0.9;
-      } else {
-        this.zoom *= 1.1;
-      }
+      this.zoom = this.zoom * (deltaY > 0 ? 0.9 : 1.1);
 
-      const afterX = e.clientX / this.zoom - this.offsetX;
-      const afterY = e.clientY / this.zoom - this.offsetY;
+      const [afterX, afterY] = this.getCoordInTheGame(clientX, clientY);
 
       this.offsetX += afterX - beforeX;
       this.offsetY += afterY - beforeY;
+    },
+
+    onClicked({ clientX, clientY }) {
+      if (this.shiftPressed) {
+        const coord = this.getCoordInTheGame(clientX, clientY)
+          .map(v => v / 5)
+          .map(Math.floor)
+          .join(',');
+
+        if (this.grid.has(coord)) {
+          this.grid.delete(coord);
+        } else {
+          this.grid.add(coord);
+        }
+
+        this.renderTheGrid();
+      }
     }
   }
 };
@@ -100,10 +167,26 @@ export default {
 }
 
 canvas {
+  cursor: crosshair;
+}
+
+.pointing {
   cursor: pointer;
 }
 
 .grabbing {
   cursor: grabbing;
+}
+
+.edit {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  outline: none;
+  border: none;
+  height: 50px;
+  padding: 0 20px;
+  color: white;
+  background-color: #555555;
 }
 </style>
