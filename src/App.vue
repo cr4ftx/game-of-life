@@ -15,25 +15,28 @@
       @click="onClicked"
     />
 
-    <button
-      v-if="running"
-      class="edit"
-      @click="running = false"
-    >
-      pause
-    </button>
-    <button
-      v-else
-      class="edit"
-      @click="running = true"
-    >
-      run
-    </button>
+    <div class="buttons">
+      <button v-if="running" class="edit" @click="running = false">
+        Pause
+      </button>
+      <button v-else class="edit" @click="running = true">Run</button>
+      <label class="edit">
+        Import
+        <input
+          v-show="false"
+          type="file"
+          accept=".rle"
+          name="rle"
+          @change="onFile"
+        />
+      </label>
+    </div>
   </div>
 </template>
 
 <script>
 import { render, nextGeneration } from './gameoflife';
+import { parseRle } from './rle-parser';
 import template from './template.json';
 
 export default {
@@ -152,6 +155,12 @@ export default {
 
         this.renderTheGrid();
       }
+    },
+
+    async onFile({ target: { files } }) {
+      this.running = false;
+      const file = await files[0].text();
+      this.grid = parseRle(file);
     }
   }
 };
@@ -178,15 +187,22 @@ canvas {
   cursor: grabbing;
 }
 
-.edit {
+.buttons {
   position: fixed;
   left: 20px;
   bottom: 20px;
+}
+
+.edit {
+  display: inline-block;
   outline: none;
   border: none;
   height: 50px;
+  line-height: 50px;
   padding: 0 20px;
   color: white;
   background-color: #555555;
+  font-size: 16px;
+  font-family: Aria;
 }
 </style>

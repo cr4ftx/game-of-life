@@ -5,7 +5,11 @@ module.exports = {
     es6: true,
     jest: true
   },
-  extends: ['eslint:recommended', 'plugin:vue/vue3-recommended'],
+  extends: [
+    'eslint:recommended',
+    'plugin:vue/vue3-recommended',
+    'prettier/vue'
+  ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
