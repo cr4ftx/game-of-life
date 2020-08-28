@@ -5,19 +5,6 @@
 
 > Game of life sandbox to practice Vue3, TDD, Custom Webpack / Babel / Eslint config to understand what VueCli basically does.
 
-## TODO
-
-2 modes
-
-Edition :
-
-- Toggle cell state
-- Import / Export structures
-
-Simulation :
-
-- Run / Pause / Speed
-
 ## Scripts
 
 ```bash

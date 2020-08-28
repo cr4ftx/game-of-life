@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint src/**/*.{js,vue} --fix",
     "prettier": "prettier --write **/*.{md,html,js,vue}",
-    "dev": "NODE_ENV=development webpack-dev-server",
+    "dev": "NODE_ENV=development webpack-dev-server --open",
     "test": "jest --coverage",
     "build": "webpack"
   },

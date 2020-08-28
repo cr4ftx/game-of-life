@@ -1,25 +1,35 @@
-const livingRegex = /^([0-9]*)o/;
-const deadRegex = /^([0-9]*)b/;
+const headerRegex = /^x = (\d+), y = (\d+)/;
+const livingRegex = /^(\d*)o/;
+const deadRegex = /^(\d*)b/;
+const lastLivingRegex = /^(\d+)[$!]/;
 
 export function parseRle(file) {
-  const [, ...bodyLines] = omitComments(file.split('\n'));
+  const [header, ...bodyLines] = omitComments(file.split(/\r?\n/));
 
-  // just ingore header for now as the current implementation doesn't need it
+  const [x, y] = parseHeader(header);
+
+  const currentX = -Math.floor(x / 2);
+  const currentY = -Math.floor(y / 2);
+
   const bodyWithoutLineBreak = bodyLines.join('');
-  const livingCells = parseBody(bodyWithoutLineBreak, 0, 0);
+  const livingCells = parseBody(bodyWithoutLineBreak, {
+    currentX,
+    currentY,
+    baseX: currentX
+  });
 
   return new Set(livingCells);
 }
 
-function parseBody(body, currentX, currentY) {
+function parseBody(body, { currentX, currentY, baseX }) {
   const deadMatch = body.match(deadRegex);
   if (deadMatch) {
     const incrementX = Number(deadMatch[1] || 1);
-    return parseBody(
-      body.substring(deadMatch[0].length),
-      currentX + incrementX,
-      currentY
-    );
+    return parseBody(body.substring(deadMatch[0].length), {
+      currentX: currentX + incrementX,
+      currentY,
+      baseX
+    });
   }
 
   const livingMatch = body.match(livingRegex);
@@ -32,25 +42,53 @@ function parseBody(body, currentX, currentY) {
 
     return [
       ...livingCells,
-      ...parseBody(
-        body.substring(livingMatch[0].length),
-        currentX + incrementX,
-        currentY
-      )
+      ...parseBody(body.substring(livingMatch[0].length), {
+        currentX: currentX + incrementX,
+        currentY,
+        baseX
+      })
+    ];
+  }
+
+  const lastLivingMatch = body.match(lastLivingRegex);
+  if (lastLivingMatch) {
+    const incrementX = Number(lastLivingMatch[1]);
+
+    const livingCells = range(incrementX).map(
+      v => `${currentX + v},${currentY}`
+    );
+
+    return [
+      ...livingCells,
+      ...parseBody(body.substring(lastLivingMatch[0].length - 1), {
+        currentX: currentX + incrementX,
+        currentY,
+        baseX
+      })
     ];
   }
 
   // EOL
   if (body.startsWith('$')) {
-    return parseBody(body.substring(1), 0, currentY + 1);
+    return parseBody(body.substring(1), {
+      currentX: baseX,
+      currentY: currentY + 1,
+      baseX
+    });
   }
 
   // EOF
-  if (body === '!' || body === '') {
+  if (body === '!') {
     return [];
   }
 
   throw new Error('Invalid token');
+}
+
+function parseHeader(header) {
+  const [, x, y] = header.match(headerRegex);
+
+  return [x, y].map(v => parseInt(v, 10));
 }
 
 const omitComments = ([head, ...tail]) =>

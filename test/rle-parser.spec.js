@@ -16,7 +16,7 @@ describe('Rle parser', () => {
       3o!
     `);
 
-    expect(grid).toEqual(new Set(['0,0', '1,0', '2,0']));
+    expect(grid).toEqual(new Set(['-1,-1', '0,-1', '1,-1']));
   });
 
   it('should parse several lines of cells', () => {
@@ -25,7 +25,7 @@ describe('Rle parser', () => {
       3o$2o!
     `);
 
-    expect(grid).toEqual(new Set(['0,0', '1,0', '2,0', '0,1', '1,1']));
+    expect(grid).toEqual(new Set(['-1,-1', '0,-1', '1,-1', '-1,0', '0,0']));
   });
 
   it('should parse several cells on the same line', () => {
@@ -34,7 +34,7 @@ describe('Rle parser', () => {
         bo$2bo$3o!
     `);
 
-    expect(grid).toEqual(new Set(['1,0', '2,1', '0,2', '1,2', '2,2']));
+    expect(grid).toEqual(new Set(['0,-1', '1,0', '-1,1', '0,1', '1,1']));
   });
 
   it('should ignore comments', () => {
@@ -46,16 +46,25 @@ describe('Rle parser', () => {
       bo$2bo$3o!
     `);
 
-    expect(grid).toEqual(new Set(['1,0', '2,1', '0,2', '1,2', '2,2']));
+    expect(grid).toEqual(new Set(['0,-1', '1,0', '-1,1', '0,1', '1,1']));
   });
 
   it('should throw an error if encounter an invalid token', () => {
     expect(() => {
       parseRle(file`
         x = 3, y = 3
-        2o$2$o!
+        2o$2x$o!
       `);
     }).toThrow(new Error('Invalid token'));
+  });
+
+  it('should be able to handle last living cell number at EOL', () => {
+    const grid = parseRle(file`
+      x = 3, y = 3
+      2b1o$3b2!
+    `);
+
+    expect(grid).toEqual(new Set(['1,-1', '2,0', '3,0']));
   });
 });
 
