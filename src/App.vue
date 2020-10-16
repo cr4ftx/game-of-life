@@ -5,8 +5,8 @@
       :width="width"
       :height="height"
       :class="{
-        grabbing: mouseDown && !shiftPressed,
-        pointing: !mouseDown && !shiftPressed
+        grabbing: mouseDown && running,
+        pointing: !mouseDown && running
       }"
       @mousemove="onMouseMove"
       @mousedown="mouseDown = true"
@@ -17,7 +17,7 @@
 
     <div class="buttons">
       <button v-if="running" class="edit" @click="running = false">
-        Pause
+        Edit
       </button>
       <button v-else class="edit" @click="running = true">Run</button>
       <label class="edit">
@@ -48,13 +48,12 @@ export default {
       height: window.innerHeight,
       grid: new Set(template),
       mouseDown: false,
-      running: false,
+      running: true,
       offsetX: window.innerWidth / 2,
       offsetY: window.innerHeight / 2,
       zoom: 1,
       cellSize: 5,
-      intervalId: null,
-      shiftPressed: false
+      intervalId: null
     };
   },
 
@@ -63,13 +62,16 @@ export default {
     offsetX: 'renderTheGrid',
     offsetY: 'renderTheGrid',
     width: 'renderTheGrid',
-    running() {
-      if (this.running) {
-        this.intervalId = setInterval(() => {
-          this.grid = nextGeneration(this.grid);
-        }, 50);
-      } else {
-        clearInterval(this.intervalId);
+    running: {
+      immediate: true,
+      handler() {
+        if (this.running) {
+          this.intervalId = setInterval(() => {
+            this.grid = nextGeneration(this.grid);
+          }, 50);
+        } else {
+          clearInterval(this.intervalId);
+        }
       }
     }
   },
@@ -78,18 +80,6 @@ export default {
     window.addEventListener('resize', () => {
       this.width = window.innerWidth;
       this.height = window.innerHeight;
-    });
-
-    window.addEventListener('keyup', e => {
-      if (e.keyCode === 16) {
-        this.shiftPressed = false;
-      }
-    });
-
-    window.addEventListener('keydown', e => {
-      if (e.keyCode === 16) {
-        this.shiftPressed = true;
-      }
     });
 
     this.renderTheGrid();
@@ -123,7 +113,7 @@ export default {
     },
 
     onMouseMove(e) {
-      if (this.mouseDown && !this.shiftPressed) {
+      if (this.mouseDown && this.running) {
         this.offsetX += e.movementX / this.zoom;
         this.offsetY += e.movementY / this.zoom;
       }
@@ -141,9 +131,9 @@ export default {
     },
 
     onClicked({ clientX, clientY }) {
-      if (this.shiftPressed) {
+      if (!this.running) {
         const coord = this.getCoordInTheGame(clientX, clientY)
-          .map(v => v / 5)
+          .map(v => v / this.cellSize)
           .map(Math.floor)
           .join(',');
 

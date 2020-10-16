@@ -2,8 +2,7 @@ module.exports = {
   env: {
     browser: true,
     node: true,
-    es6: true,
-    jest: true
+    es6: true
   },
   extends: [
     'eslint:recommended',
@@ -15,7 +14,7 @@ module.exports = {
     SharedArrayBuffer: 'readonly'
   },
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 2020,
     sourceType: 'module'
   },
   plugins: ['vue'],

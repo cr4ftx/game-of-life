@@ -1,4 +1,4 @@
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const path = require('path');
@@ -28,13 +28,13 @@ module.exports = {
   },
 
   output: {
-    filename: 'app.[hash].js',
+    filename: 'app.[contenthash].js',
     path: path.resolve(__dirname, 'dist')
   },
 
   plugins: [
     new VueLoaderPlugin(),
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: 'public/index.html'
     })
